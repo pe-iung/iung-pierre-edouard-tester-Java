@@ -152,4 +152,19 @@ public class FareCalculatorServiceTest {
         assertEquals( Fare.FREE_30_MIN , ticket.getPrice());
     }
 
+    @Test
+    public void calculateFareCarWithDiscount(){
+        Date inTime = new Date();
+        inTime.setTime( System.currentTimeMillis() - (  2 * 60 * 60 * 1000) ); //2hours parking converted in millis
+        Date outTime = new Date();
+        ParkingSpot parkingSpot = new ParkingSpot(1, ParkingType.BIKE,false);
+
+        ticket.setInTime(inTime);
+        ticket.setOutTime(outTime);
+        ticket.setParkingSpot(parkingSpot);
+        Boolean isDiscount = true;
+        fareCalculatorService.calculateFare(ticket, isDiscount);
+        assertEquals( (2 * Fare.CAR_RATE_PER_HOUR)*95/100 , ticket.getPrice());
+    }
+
 }
