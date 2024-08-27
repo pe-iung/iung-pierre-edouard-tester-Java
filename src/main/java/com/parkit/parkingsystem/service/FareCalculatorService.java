@@ -16,10 +16,7 @@ public class FareCalculatorService {
 
         double inTime = ticket.getInTime().getTime();
         double outTime = ticket.getOutTime().getTime();
-
-        //TODO: Some tests are failing here. Need to check if this logic is correct
         double duration = ((outTime - inTime) / 1000.d) / 3600.0d;
-
 
 
         // init price to 0.0

@@ -28,6 +28,7 @@ public class ParkingService {
     }
 
     public void processIncomingVehicle() {
+        System.out.println("Welcome to our Parking !");
         try{
             ParkingSpot parkingSpot = getNextParkingNumberIfAvailable();
             if(parkingSpot !=null && parkingSpot.getId() > 0){
@@ -103,7 +104,13 @@ public class ParkingService {
             Ticket ticket = ticketDAO.getTicket(vehicleRegNumber);
             Date outTime = new Date();
             ticket.setOutTime(outTime);
-            fareCalculatorService.calculateFare(ticket, false);
+            boolean isDiscount = false;
+            int numberOfTickets = 0;
+            numberOfTickets = ticketDAO.getNbTicket(vehicleRegNumber);
+            if (numberOfTickets>0) {
+                isDiscount = true;
+            }
+            fareCalculatorService.calculateFare(ticket, isDiscount);
             if(ticketDAO.updateTicket(ticket)) {
                 ParkingSpot parkingSpot = ticket.getParkingSpot();
                 parkingSpot.setAvailable(true);
