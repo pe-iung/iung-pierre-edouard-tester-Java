@@ -10,8 +10,12 @@ public class FareCalculatorService {
     }
 
     public void calculateFare(Ticket ticket, Boolean isDiscount) {
-        if ((ticket.getOutTime() == null) || (ticket.getOutTime().before(ticket.getInTime()))) {
-            throw new IllegalArgumentException("Out time provided is incorrect:" + ticket.getOutTime().toString());
+        if (ticket.getOutTime() == null){
+            throw new IllegalArgumentException("Out time provided is null");
+        }
+
+        if (ticket.getOutTime().before(ticket.getInTime())) {
+            throw new IllegalArgumentException("Out time provided is before int time :" + ticket.getOutTime().toString());
         }
 
         double inTime = ticket.getInTime().getTime();
