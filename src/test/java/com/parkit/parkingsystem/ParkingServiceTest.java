@@ -6,12 +6,12 @@ import com.parkit.parkingsystem.dao.TicketDAO;
 import com.parkit.parkingsystem.model.ParkingSpot;
 import com.parkit.parkingsystem.model.Ticket;
 import com.parkit.parkingsystem.service.ParkingService;
+import com.parkit.parkingsystem.tools.TimeTool;
 import com.parkit.parkingsystem.util.InputReaderUtil;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Date;
@@ -155,8 +155,6 @@ public class ParkingServiceTest {
         //given a parking app
         //when  a vehicle enter the parking with an illegal input
         when(inputReaderUtil.readSelection()).thenReturn(3);
-
-        //WHEN
         ParkingSpot response = parkingService.getNextParkingNumberIfAvailable();
 
         //THEN
@@ -169,7 +167,7 @@ public class ParkingServiceTest {
     private void initTicket(ParkingType parkingType){
         parkingSpot = new ParkingSpot(1, parkingType,true);
         ticket = new Ticket();
-        ticket.setInTime(new Date(System.currentTimeMillis() - (60*60*1000)));
+        ticket.setInTime(TimeTool.now().minusMinute(60).toDate());
         ticket.setParkingSpot(parkingSpot);
         ticket.setVehicleRegNumber(vehicleRegistrationNumber);
     }

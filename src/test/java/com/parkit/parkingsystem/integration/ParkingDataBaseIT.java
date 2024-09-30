@@ -8,6 +8,7 @@ import com.parkit.parkingsystem.integration.service.DataBasePrepareService;
 import com.parkit.parkingsystem.model.ParkingSpot;
 import com.parkit.parkingsystem.model.Ticket;
 import com.parkit.parkingsystem.service.ParkingService;
+import com.parkit.parkingsystem.tools.TimeTool;
 import com.parkit.parkingsystem.util.InputReaderUtil;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,7 +25,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class ParkingDataBaseIT {
 
-    private static DataBaseTestConfig dataBaseTestConfig = new DataBaseTestConfig();
+    private static final DataBaseTestConfig dataBaseTestConfig = new DataBaseTestConfig();
     private static ParkingSpotDAO parkingSpotDAO;
     private static TicketDAO ticketDAO;
     private static DataBasePrepareService dataBasePrepareService;
@@ -52,12 +53,6 @@ public class ParkingDataBaseIT {
         //given a parking with available spots
         final String vehicleRegistrationNumber ="ABCDEF";
         final ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
-
-        Ticket expectedTicket = new Ticket();
-        expectedTicket.setId(1);
-        expectedTicket.setParkingSpot(new ParkingSpot(1, ParkingType.CAR, false));
-        expectedTicket.setVehicleRegNumber(vehicleRegistrationNumber);
-        expectedTicket.setInTime(new Date());
 
         // when we process an incoming vehicle
         when(inputReaderUtil.readSelection()).thenReturn(1);
@@ -129,8 +124,8 @@ public class ParkingDataBaseIT {
     }
 
     public Ticket createIncomingTicket(ParkingSpot parkingSpot, String vehicleRegNumber, long minusMinute){
-        final long currentTime = System.currentTimeMillis();
-        final long updatedInTime = (currentTime - (minusMinute*60*1000));
+
+        final long updatedInTime = TimeTool.now().minusMinute(minusMinute).toLong();
         final Date inTime = new Date();
         inTime.setTime(updatedInTime);
 
@@ -142,8 +137,8 @@ public class ParkingDataBaseIT {
         return ticket;
     }
 
-    public Ticket createExitingTicketOneHourAgo(ParkingSpot parkingSpot, String vehicleRegNumber, long minusMinute, double farePrice){
-        final long lastOutTimeOneHourAgo = System.currentTimeMillis() - (60*60*1000);
+    private Ticket createExitingTicketOneHourAgo(ParkingSpot parkingSpot, String vehicleRegNumber, long minusMinute, double farePrice){
+        final long lastOutTimeOneHourAgo = TimeTool.now().minusHour(1).toLong();
         final long updatedInTime = (lastOutTimeOneHourAgo - (minusMinute*60*1000));
         final Date inTime = new Date();
         final Date outTime = new Date();
