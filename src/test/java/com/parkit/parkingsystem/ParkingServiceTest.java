@@ -45,6 +45,12 @@ public class ParkingServiceTest {
         this.parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
     }
 
+    /**
+     * test for exiting parking with a car
+     * given a vehicle in the parking
+     * when vehicle exiting the parking
+     * then outTime is added to ticket
+     */
     @Test
     public void processExitingVehicleTest() throws Exception {
         initCarTicket();
@@ -65,7 +71,12 @@ public class ParkingServiceTest {
         assertNotNull(ticket.getOutTime());
     }
 
-
+    /**
+     * test for entering a parking with a car
+     * given a parkingspot available
+     * when a car enter the parking
+     * then a inTime is added to the ticket
+     */
     @Test
     public void processIncomingVehicleTest() throws Exception {
 
@@ -74,7 +85,7 @@ public class ParkingServiceTest {
         when(inputReaderUtil.readSelection()).thenReturn(1);
 
 
-        //when a car enter in the parking
+        //when a car enter the parking
         when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn(vehicleRegistrationNumber);
         when(parkingSpotDAO.updateParking(any(ParkingSpot.class))).thenReturn(true);
         ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
@@ -96,10 +107,16 @@ public class ParkingServiceTest {
 
     }
 
+    /**
+     * test for exiting a parking with unable to update ticket
+     * given a vehicle in the parking
+     * when an updateTicket is unable to be processed
+     * then the parkingspot is not udpated
+     */
     @Test
     public void processExitingVehicleTestUnableUpdate() throws Exception {
         initCarTicket();
-        // GIVEN a vehicle in the parking
+        // given a vehicle in the parking
         when(inputReaderUtil.readVehicleRegistrationNumber()).thenReturn(vehicleRegistrationNumber);
         when(ticketDAO.getTicket(vehicleRegistrationNumber)).thenReturn(ticket);
         when(ticketDAO.getNbTicket(vehicleRegistrationNumber)).thenReturn(2);
@@ -113,6 +130,12 @@ public class ParkingServiceTest {
         verify(parkingSpotDAO, times(0)).updateParking(any(ParkingSpot.class));
     }
 
+    /**
+     * test for getting the next available parking number if available
+     * Given a parking with available spots
+     * When getting the next parking number
+     * Then the next available slot is provided
+     */
     @Test
     public void getNextParkingNumberIfAvailableTest() throws Exception{
         // Given a parking with available spots
@@ -132,6 +155,12 @@ public class ParkingServiceTest {
 
     }
 
+    /**
+     * test for getting the next available parking number if available
+     * Given a parking with available spots
+     * When getting the next parking number
+     * Then the next available slot is provided
+     */
     @Test
     public void testGetNextParkingNumberIfAvailableParkingNumberNotFound() throws Exception{
 
@@ -149,21 +178,32 @@ public class ParkingServiceTest {
         assertNull(parkingspot);
     }
 
-
+    /**
+     * test getting the next parking number if available with wrong arguments input
+     * given an invalid user input
+     * when the parking service is looking for the next parking nuber if available
+     * then the next parking number if available answer is null
+     */
     @Test
     public void GetNextParkingNumberIfAvailableParkingNumberWrongArgumentTest() throws Exception {
-        //given a parking app
-        //when  a vehicle enter the parking with an illegal input
+        //given an invalid user input
         when(inputReaderUtil.readSelection()).thenReturn(3);
+
+        //when the parking service is looking for the next parking nuber if available
         ParkingSpot response = parkingService.getNextParkingNumberIfAvailable();
 
-        //THEN
+        //then the next parking number if available answer is null
         assertNull(response);
     }
 
 
 
-
+    /**
+     * initialisation of a ticket
+     * by default the vehicule entered 60min ago
+     * setting the parking spot and vehicle registration number
+     * @param parkingType
+     */
     private void initTicket(ParkingType parkingType){
         parkingSpot = new ParkingSpot(1, parkingType,true);
         ticket = new Ticket();
@@ -171,6 +211,7 @@ public class ParkingServiceTest {
         ticket.setParkingSpot(parkingSpot);
         ticket.setVehicleRegNumber(vehicleRegistrationNumber);
     }
+
 
     private void initCarTicket() {
         initTicket(ParkingType.CAR);
